@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]   # chạy khi bạn push lên nhánh main
+  workflow_dispatch:       # cho phép chạy thủ công
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # ép chạy Node.js 24
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4   # đổi sang @v5 nếu có
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24          # dùng Node.js 24
+
+      - name: Build project
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist   # thư mục chứa file build (ví dụ dist)
